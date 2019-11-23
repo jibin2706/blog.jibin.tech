@@ -36,67 +36,71 @@ module.exports = {
     },
     // rss feed at /rss.xml
     {
-      resolve: `gatsby-plugin-feed`,
-      options: {
-        // this base query will be merged with any queries in each feed
-        query: `
-          {
-            site {
-              siteMetadata {
-                title
-                description
-                siteUrl
-                site_url: siteUrl
-              }
-            }
+      resolve: `gatsby-plugin-feed-generator`,
+      rss: true,
+      siteQuery: ` {
+        site {
+          siteMetadata {
+            title
+            description
+            siteUrl
+            site_url: siteUrl
           }
-        `,
-        feeds: [
-          {
-            serialize: ({ query: { site, allMarkdownRemark } }) => {
-              return allMarkdownRemark.edges.map(edge => {
-                const siteUrl = site.siteMetadata.siteUrl
-                const postText = `
-                <div style="margin-top=55px; font-style: italic;">(This is an article posted to my blog at blog.jibin.tech . You can read it online by <a href="${siteUrl +
-                  edge.node.fields.slug}">clicking here</a>.)</div>
-              `
-                return Object.assign({}, edge.node.frontmatter, {
-                  description: edge.node.excerpt,
-                  date: edge.node.frontmatter.date,
-                  url: site.siteMetadata.siteUrl + edge.node.fields.slug,
-                  guid: site.siteMetadata.siteUrl + edge.node.fields.slug,
-                  custom_elements: [
-                    { 'content:encoded': edge.node.html + postText },
-                  ],
-                })
-              })
-            },
-            query: `
-              {
-                allMarkdownRemark(
-                  limit: 1000,
-                  sort: { order: DESC, fields: [frontmatter___date] },
-                  
-                ) {
-                  edges {
-                    node {
-                      excerpt(pruneLength: 50)
-                      html
-                      fields { slug }
-                      frontmatter {
-                        title
-                        date
-                      }
-                    }
+        }
+      }`,
+      feeds: [
+        {
+          name: 'rss.xml',
+          query: `{
+            allMdx(
+              limit: 1000,
+              sort: { order: DESC, fields: [frontmatter___date] },
+              
+            ) {
+              edges {
+                node {
+                  excerpt(pruneLength: 50)
+                  body
+                  fields { slug }
+                  frontmatter {
+                    title
+                    date
                   }
                 }
               }
-            `,
-            output: '/rss.xml',
-            title: "Jibin Thomas' Personal Blog RSS Feed",
+            }
+          }`,
+          normalize: ({ query: { site, allMdx } }) => {
+            return allMdx.edges.map(edge => {
+              return {
+                title: edge.node.frontmatter.title,
+                date: edge.node.frontmatter.date,
+                url: site.siteMetadata.siteUrl + edge.node.frontmatter.path,
+                html: edge.node.html,
+              }
+            })
           },
-        ],
-      },
+          // normalize: ({ query: { site, allMdx } }) => {
+          //   return allMdx.edges.map(edge => {
+          //     const siteUrl = site.siteMetadata.siteUrl
+          //     const postText = `
+          //     <div style="margin-top=55px; font-style: italic;">(This is an article posted to my blog at blog.jibin.tech . You can read it online by <a href="${siteUrl +
+          //       edge.node.fields.slug}">clicking here</a>.)</div>
+          //   `
+          //     return Object.assign({}, edge.node.frontmatter, {
+          //       description: edge.node.excerpt,
+          //       date: edge.node.frontmatter.date,
+          //       url: site.siteMetadata.siteUrl + edge.node.fields.slug,
+          //       guid: site.siteMetadata.siteUrl + edge.node.fields.slug,
+          //       custom_elements: [
+          //         { 'content:encoded': edge.node.html + postText },
+          //       ],
+          //     })
+          //   })
+          // },
+          title: "Jibin Thomas' Personal Blog RSS Feed",
+        },
+      ],
     },
     // markdown file are in that directory (/content/)
     {
@@ -129,9 +133,10 @@ module.exports = {
     },
     // transforming markdown in html
     {
-      resolve: `gatsby-transformer-remark`,
+      resolve: `gatsby-plugin-mdx`,
       options: {
-        plugins: [
+        extensions: [`.mdx`, `.md`],
+        gatsbyRemarkPlugins: [
           // using images in markdown file
           {
             resolve: `gatsby-remark-images`,
@@ -142,7 +147,6 @@ module.exports = {
               maxWidth: 800,
               quality: 100,
               withWebp: true,
-              tracedSVG: true,
             },
           },
           // adding id to headers in markdown
@@ -168,6 +172,7 @@ module.exports = {
           // copying gif and other files
           'gatsby-remark-copy-linked-files',
         ],
+        plugins: [`gatsby-remark-images`],
       },
     },
     // this (optional) plugin enables Progressive Web App + Offline functionality

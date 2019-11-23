@@ -18,12 +18,11 @@ export default IndexPage
 
 export const query = graphql`
   query {
-    allMarkdownRemark(sort: { fields: [frontmatter___date], order: DESC }) {
+    allMdx(sort: { fields: [frontmatter___date], order: DESC }) {
       totalCount
       edges {
         node {
           id
-          timeToRead
           frontmatter {
             title
             date(formatString: "MMMM D, YYYY")

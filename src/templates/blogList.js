@@ -4,7 +4,7 @@ import { Link } from 'gatsby'
 import './blogList.scss'
 
 const BlogList = ({ data, templateTitle }) => {
-  let blog = data.allMarkdownRemark.edges
+  let blog = data.allMdx.edges
   return (
     <>
       {templateTitle === 'Articles' ? (

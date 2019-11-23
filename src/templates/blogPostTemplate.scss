@@ -62,7 +62,7 @@
   }
 
   li {
-    margin: 1rem 0;
+    margin-bottom: 1rem 0;
   }
 
   blockquote {
@@ -90,6 +90,13 @@
         content: '\2014';
       }
     }
+  }
+
+  .info-bar {
+    display: block;
+    padding: 1rem;
+    border-left: 3px solid $primary-light;
+    margin: 1rem 0;
   }
 
   .code-line {
