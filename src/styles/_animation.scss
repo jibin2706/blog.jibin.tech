@@ -28,3 +28,12 @@
     transform: translate(0px);
   }
 }
+
+@keyframes blink-dot {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.2);
+  }
+}

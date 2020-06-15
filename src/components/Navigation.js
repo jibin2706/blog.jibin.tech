@@ -26,7 +26,7 @@ function Navigation() {
           ],
           {
             delay: 500,
-            duration: (index + 1) * 300,
+            duration: (index + 1) * 250,
             easing: 'cubic-bezier(0.39, 0.575, 0.565, 1)',
             fill: 'backwards',
             iterations: 1,
@@ -45,6 +45,9 @@ function Navigation() {
       <nav id="nav-desktop" className="nav">
         <Link className="nav__item" to="/" activeClassName="nav__item--active">
           Home
+        </Link>
+        <Link className="nav__item" to="/about/" activeClassName="nav__item--active">
+          About Me
         </Link>
         <Link className="nav__item" to="/blog/" activeClassName="nav__item--active">
           Blog
@@ -75,6 +78,9 @@ function Navigation() {
         <div className="nav-mobile__container" ref={mobileNavLinks}>
           <Link className="nav__item" to="/" activeClassName="nav__item--active">
             Home
+          </Link>
+          <Link className="nav__item" to="/about/" activeClassName="nav__item--active">
+            About Me
           </Link>
           <Link className="nav__item" to="/blog/" activeClassName="nav__item--active">
             Blog
